@@ -1,19 +1,19 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Board, BoardMembershipRequest
-from .serializers import BoardMembershipRequestSerializer
-from .serializers import BoardSerializer
+from django.shortcuts import get_object_or_404
+
+from .models import Board, BoardMembershipRequest, Category, Comment, Post, Like
+from .serializers import BoardSerializer, BoardMembershipRequestSerializer, CategorySerializer, CommentSerializer, PostSerializer
 
 
 class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
 
+
+### 보드에 가입 신청, 기다리기
 class BoardMembershipRequestViewSet(viewsets.ViewSet):
-    """
-    보드 가입 신청과 승인을 처리하는 ViewSet
-    """
 
     def create(self, request):
         serializer = BoardMembershipRequestSerializer(data=request.data)
@@ -34,3 +34,37 @@ class BoardMembershipRequestViewSet(viewsets.ViewSet):
         membership_request.save()
         board.members.add(membership_request.user)
         return Response({'status': 'membership approved'})
+    
+    
+### 카테고리 뷰셋
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    
+
+### 포스트 뷰셋
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    
+    # PostViewSet 내부
+    @action(detail=True, methods=['post'], url_path='like')
+    def like_post(self, request, pk=None):
+        post = get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if created:
+            return Response({'status': 'liked'})
+        else:
+            like.delete()
+            return Response({'status': 'unliked'})
+
+### 코멘트 뷰셋
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
+        
