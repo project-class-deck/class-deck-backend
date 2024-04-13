@@ -9,6 +9,7 @@ def test_school():
     return school
 
 
+@pytest.mark.django_db
 def test_new_school(test_school):
     assert test_school.name == "Test School"
     assert test_school.address == "123 Test Street"
