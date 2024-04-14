@@ -1,5 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework import status
 
 from users.models import School
 
@@ -30,11 +32,37 @@ def test_가입할_할_수_있다(client):
     assert response.data["classroom"] == 1
 
     assert User.objects.filter(username="testuser").exists()
-    user = User.objects.get(username="testuser")
+    test_user = User.objects.get(username="testuser")
 
-    assert user.nickname == "testnickname"
-    assert user.grade == 1
-    assert user.classroom == 1
-    assert user.email == "test@test.com"
-    assert user.is_active is True
-    assert user.is_staff is False
+    assert test_user.nickname == "testnickname"
+    assert test_user.grade == 1
+    assert test_user.classroom == 1
+    assert test_user.email == "test@test.com"
+    assert test_user.is_active is True
+    assert test_user.is_staff is False
+
+
+@pytest.fixture
+def user():
+    test_user = User.objects.create_user(
+        username="john", email="john@example.com", password="s3cr3t"
+    )
+    return test_user
+
+
+@pytest.mark.django_db
+def test_login_with_valid_credentials(client, user):
+    url = reverse("rest_login")
+    data = {"username": "john", "password": "s3cr3t"}
+    response = client.post(url, data)
+    assert response.status_code == status.HTTP_200_OK
+    assert "key" in response.data  # or 'access' depending on your JWT configuration
+
+
+@pytest.mark.django_db
+def test_login_with_invalid_credentials(client):
+    url = reverse("rest_login")
+    data = {"username": "john", "password": "wrongpassword"}
+    response = client.post(url, data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "non_field_errors" in response.data
