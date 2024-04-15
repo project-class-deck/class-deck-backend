@@ -22,21 +22,27 @@ CORS_ORIGIN_WHITELIST = env.list(
     "CORS_ORIGIN_WHITELIST", default=["http://127.0.0.1:3000", "http://localhost:3000"]
 )
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 # Application definition
 
 INSTALLED_APPS = [
+    # First-party
+    "users",
+    "content",
+    "corsheaders",
+    # Third-party
+    "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    "drf_spectacular",
+    # Contrib
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "corsheaders",
-    "users",
-    "content",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "dj_rest_auth",
 ]
 
 # DJANGO REST FRAMEWORK
@@ -73,8 +79,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "backend.urls"
 
