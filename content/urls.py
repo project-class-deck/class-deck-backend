@@ -13,7 +13,9 @@ from .views import (
 router = DefaultRouter()
 router.register(r"boards", BoardViewSet)
 router.register(
-    r"membership_requests", BoardMembershipRequestViewSet, basename="membership-request"
+    r"membership_requests/<int:id>",
+    BoardMembershipRequestViewSet,
+    basename="membership-request",
 )
 router.register(r"categories", CategoryViewSet)
 router.register(r"posts", PostViewSet)

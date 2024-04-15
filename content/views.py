@@ -20,8 +20,10 @@ class BoardViewSet(viewsets.ModelViewSet):
 
 # 보드에 가입 신청, 기다리기
 class BoardMembershipRequestViewSet(viewsets.ViewSet):
+    serializer_class = BoardMembershipRequestSerializer
+
     def create(self, request):
-        serializer = BoardMembershipRequestSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
