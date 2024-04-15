@@ -8,11 +8,19 @@ from users.models import School
 User = get_user_model()
 
 
+@pytest.fixture
+def user():
+    test_user = User.objects.create_user(
+        username="john", email="john@example.com", password="s3cr3t"
+    )
+    return test_user
+
+
 @pytest.mark.django_db
 def test_가입할_할_수_있다(client):
     school = School.objects.create(name="Test School", address="123 Test Street")
     response = client.post(
-        "/users/register/",
+        reverse("user-register"),
         {
             "username": "testuser",
             "email": "test@test.com",
@@ -42,21 +50,18 @@ def test_가입할_할_수_있다(client):
     assert test_user.is_staff is False
 
 
-@pytest.fixture
-def user():
-    test_user = User.objects.create_user(
-        username="john", email="john@example.com", password="s3cr3t"
-    )
-    return test_user
-
-
 @pytest.mark.django_db
 def test_login_with_valid_credentials(client, user):
     url = reverse("rest_login")
     data = {"username": "john", "password": "s3cr3t"}
     response = client.post(url, data)
+    print(response.data)
     assert response.status_code == status.HTTP_200_OK
-    assert "key" in response.data  # or 'access' depending on your JWT configuration
+    assert "access" in response.data
+    assert "refresh" in response.data
+    login_user = response.data["user"]
+    assert login_user["username"] == "john"
+    assert login_user["email"] == "john@example.com"
 
 
 @pytest.mark.django_db
