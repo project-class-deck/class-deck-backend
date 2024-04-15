@@ -55,6 +55,7 @@ def test_login_with_valid_credentials(client, user):
     url = reverse("rest_login")
     data = {"username": "john", "password": "s3cr3t"}
     response = client.post(url, data)
+    print(response.data)
     assert response.status_code == status.HTTP_200_OK
     assert "access" in response.data
     assert "refresh" in response.data
