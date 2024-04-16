@@ -33,6 +33,22 @@ poetry add package_name
 poetry export -f requirements.txt --output requirements.txt
 ```
 
+### Memcached
+
+For Mac OS
+
+- install posgresql
+
+```sh
+brew install memcached
+```
+
+- run postgresql
+
+```sh
+brew services start memcached
+```
+
 ### Postgresql
 
 For Mac OS
