@@ -47,40 +47,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-# DJANGO REST FRAMEWORK
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-    ),
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
-
-JWT_AUTH_COOKIE = "myhim-jwt"
-
-REST_AUTH = {
-    "JWT_AUTH_COOKIE": JWT_AUTH_COOKIE,
-    "JWT_AUTH_REFRESH_COOKIE": f"{JWT_AUTH_COOKIE}-refresh",
-    "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
-    "USE_JWT": True,
-    "JWT_AUTH_SECURE": False,
-    "JWT_AUTH_HTTPONLY": False,
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": True,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "VERIFYING_KEY": None,
-    "AUDIENCE": None,
-    "ISSUER": None,
-    "JWK_URL": None,
-    "LEEWAY": 0,
-}
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -143,6 +109,47 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": env("MEMCACHED_LOCATION", default="localhost:11211"),
+    }
+}
+
+# DJANGO REST FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+JWT_AUTH_COOKIE = "myhim-jwt"
+
+REST_AUTH = {
+    "JWT_AUTH_COOKIE": JWT_AUTH_COOKIE,
+    "JWT_AUTH_REFRESH_COOKIE": f"{JWT_AUTH_COOKIE}-refresh",
+    "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
+    "USE_JWT": True,
+    "JWT_AUTH_SECURE": False,
+    "JWT_AUTH_HTTPONLY": False,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+    "JWK_URL": None,
+    "LEEWAY": 0,
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -169,7 +176,7 @@ MEDIA_ROOT = str(BASE_DIR / "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 
 LOGGING = {
     "version": 1,
