@@ -3,12 +3,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     nickname = models.CharField(max_length=50, unique=True)
-    school = models.ForeignKey("School", null=True, on_delete=models.CASCADE)
-    grade = models.SmallIntegerField(default=1)
-    classroom = models.SmallIntegerField(default=1)
 
     groups = models.ManyToManyField(
         "auth.Group",
@@ -26,11 +23,3 @@ class CustomUser(AbstractUser):
         related_name="customuser_set",
         related_query_name="customuser",
     )
-
-
-class School(models.Model):
-    name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
