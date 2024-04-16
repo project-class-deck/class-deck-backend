@@ -35,8 +35,6 @@ def test_가입할_할_수_있다(client):
     test_user = User.objects.get(username="testuser")
 
     assert test_user.nickname == "testnickname"
-    assert test_user.grade == 1
-    assert test_user.classroom == 1
     assert test_user.email == "test@test.com"
     assert test_user.is_active is True
     assert test_user.is_staff is False

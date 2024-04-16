@@ -11,8 +11,6 @@ def user():
         email="testuser@example.com",
         password="testpassword123",
         nickname="testnickname",
-        grade=1,
-        classroom=1,
     )
     return test_user
 
@@ -22,8 +20,6 @@ def test_new_user(user):
     assert user.username == "testuser"
     assert user.email == "testuser@example.com"
     assert user.nickname == "testnickname"
-    assert user.grade == 1
-    assert user.classroom == 1
     assert user.is_active
     assert not user.is_staff
     assert not user.is_superuser
