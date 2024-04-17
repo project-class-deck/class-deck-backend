@@ -100,7 +100,6 @@ def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(c
     response = client.post(
         reverse("student-register"),
         {
-            "username": "studentuser",
             "nickname": "studentnickname",
         },
         format="json",
@@ -113,4 +112,7 @@ def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(c
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["username"] == "studentuser"
+
+    assert response.data["nickname"] == "studentnickname"
+    assert "username" in response.data
+    assert "email" in response.data
