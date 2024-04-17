@@ -30,6 +30,8 @@ def test_가입할_할_수_있다(client):
     assert response.status_code == 201
     assert response.data["username"] == "testuser"
     assert response.data["nickname"] == "testnickname"
+    assert "access" in response.data
+    assert "refresh" in response.data
 
     assert User.objects.filter(username="testuser").exists()
     test_user = User.objects.get(username="testuser")
@@ -45,8 +47,8 @@ def test_학생은_닉네임만_입력해서_가입할_할_수_있다(client):
     response = client.post(
         reverse("student-register"),
         {
-            "username": "testuser",
-            "nickname": "testnickname",
+            "username": "studentuser",
+            "nickname": "studentnickname",
         },
         format="json",
     )
@@ -54,6 +56,8 @@ def test_학생은_닉네임만_입력해서_가입할_할_수_있다(client):
     assert response.status_code == 201
     assert response.data["username"] == "testuser"
     assert response.data["nickname"] == "testnickname"
+    assert "access" in response.data
+    assert "refresh" in response.data
 
     assert User.objects.filter(username="testuser").exists()
     test_user = User.objects.get(username="testuser")
@@ -95,19 +99,21 @@ def test_사용자는_올바르지_않은_인증으로는_로그인을_할_수_�
 
 
 @pytest.mark.django_db
-def test_학생은_비밀번호_없이도_로그인을_할_수_있다(client, user):
-    url = reverse("rest_login")
+def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(client, user):
+    response = client.post(
+        reverse("student-register"),
+        {
+            "username": "studentuser",
+            "nickname": "studentnickname",
+        },
+        format="json",
+    )
 
-    data = {"username": "john", "password": "s3cr3t"}
+    access = response.data["access"]
 
-    response = client.post(url, data)
+    response = client.get(
+        reverse("rest_user_details"), HTTP_AUTHORIZATION=f"Bearer {access}"
+    )
 
     assert response.status_code == status.HTTP_200_OK
-    assert "access" in response.data
-    assert "refresh" in response.data
-
-    login_user = response.data["user"]
-    assert login_user["username"] == "john"
-    assert login_user["email"] == "john@example.com"
-
-    assert User.objects.filter(username="john").exists()
+    assert response.data["username"] == "studentuser"

@@ -37,6 +37,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
         return user
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        refresh = RefreshToken.for_user(instance)
+
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        return data
+
 
 class StudentRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
