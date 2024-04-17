@@ -92,3 +92,22 @@ def test_사용자는_올바르지_않은_인증으로는_로그인을_할_수_�
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "non_field_errors" in response.data
+
+
+@pytest.mark.django_db
+def test_학생은_비밀번호_없이도_로그인을_할_수_있다(client, user):
+    url = reverse("rest_login")
+
+    data = {"username": "john", "password": "s3cr3t"}
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+    login_user = response.data["user"]
+    assert login_user["username"] == "john"
+    assert login_user["email"] == "john@example.com"
+
+    assert User.objects.filter(username="john").exists()

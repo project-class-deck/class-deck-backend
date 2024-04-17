@@ -2,6 +2,7 @@ import re
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -49,3 +50,11 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
         )
         user.set_unusable_password()
         return user
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        refresh = RefreshToken.for_user(instance)
+
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        return data
