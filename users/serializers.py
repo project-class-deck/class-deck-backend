@@ -35,3 +35,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
         )
         return user
+
+
+class StudentRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "nickname")
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            nickname=validated_data["nickname"],
+        )
+        user.set_unusable_password()
+        return user
