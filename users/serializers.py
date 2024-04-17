@@ -1,4 +1,5 @@
 import re
+import uuid
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -49,11 +50,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class StudentRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "nickname")
+        fields = ("id", "nickname")
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data["username"],
+            username=uuid.uuid4().hex[:30],
             nickname=validated_data["nickname"],
         )
         user.set_unusable_password()
@@ -66,3 +67,10 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
         data["refresh"] = str(refresh)
         data["access"] = str(refresh.access_token)
         return data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "nickname")
+        read_only_fields = ("id", "username", "email", "nickname")
