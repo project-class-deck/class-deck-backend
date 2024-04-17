@@ -54,15 +54,15 @@ def test_학생은_닉네임만_입력해서_가입할_할_수_있다(client):
     )
 
     assert response.status_code == 201
-    assert response.data["username"] == "testuser"
-    assert response.data["nickname"] == "testnickname"
+    assert response.data["username"] == "studentuser"
+    assert response.data["nickname"] == "studentnickname"
     assert "access" in response.data
     assert "refresh" in response.data
 
-    assert User.objects.filter(username="testuser").exists()
-    test_user = User.objects.get(username="testuser")
+    assert User.objects.filter(username="studentuser").exists()
+    test_user = User.objects.get(username="studentuser")
 
-    assert test_user.nickname == "testnickname"
+    assert test_user.nickname == "studentnickname"
     assert test_user.is_active is True
     assert test_user.is_staff is False
 
