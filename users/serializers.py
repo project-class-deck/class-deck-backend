@@ -57,6 +57,7 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=uuid.uuid4().hex[:30],
             nickname=validated_data["nickname"],
+            email=f"{uuid.uuid4().hex[:30]}@myhymn.com",
         )
         user.set_unusable_password()
         return user
