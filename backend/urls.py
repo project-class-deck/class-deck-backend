@@ -13,6 +13,6 @@ urlpatterns = [
         name="api-docs",
     ),
     path(f"api/{API_VERSION}/auth/", include("dj_rest_auth.urls")),
-    path(f"api/{API_VERSION}/users/", include("users.urls")),
+    path(f"api/{API_VERSION}/", include("users.urls")),
     path(f"api/{API_VERSION}/content/", include("content.urls")),
 ]

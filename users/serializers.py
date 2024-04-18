@@ -1,6 +1,7 @@
 import re
 import uuid
 
+import dj_rest_auth.serializers
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -56,6 +57,7 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=uuid.uuid4().hex[:30],
             nickname=validated_data["nickname"],
+            email=f"{uuid.uuid4().hex[:30]}@myhymn.com",
         )
         user.set_unusable_password()
         return user
@@ -74,3 +76,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "username", "email", "nickname")
         read_only_fields = ("id", "username", "email", "nickname")
+
+
+class UserLoginSerializer(dj_rest_auth.serializers.LoginSerializer):
+    email = None
