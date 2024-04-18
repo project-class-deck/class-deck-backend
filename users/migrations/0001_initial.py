@@ -70,6 +70,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
                     "is_staff",
                     models.BooleanField(
                         default=False,
@@ -91,13 +97,7 @@ class Migration(migrations.Migration):
                         default=django.utils.timezone.now, verbose_name="date joined"
                     ),
                 ),
-                (
-                    "email",
-                    models.EmailField(
-                        max_length=254, unique=True, verbose_name="email address"
-                    ),
-                ),
-                ("nickname", models.CharField(max_length=50, unique=True)),
+                ("nickname", models.CharField(max_length=50, verbose_name="닉네임")),
                 (
                     "groups",
                     models.ManyToManyField(

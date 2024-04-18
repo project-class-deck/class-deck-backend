@@ -4,5 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    email = models.EmailField(_("email address"), unique=True)
-    nickname = models.CharField(max_length=50, unique=True)
+    nickname = models.CharField(
+        max_length=50, blank=False, null=False, verbose_name=_("닉네임")
+    )

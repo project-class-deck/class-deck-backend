@@ -65,6 +65,39 @@ def test_학생은_닉네임만_입력해서_가입할_할_수_있다(client):
 
 
 @pytest.mark.django_db
+def test_학생은_닉네임을_중복해서_가입할_할_수_있다(client):
+    response = client.post(
+        reverse("student-register"),
+        {
+            "nickname": "studentnickname",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    assert response.data["nickname"] == "studentnickname"
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+    assert User.objects.filter(nickname="studentnickname").exists()
+
+    response = client.post(
+        reverse("student-register"),
+        {
+            "nickname": "studentnickname",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+    assert response.data["nickname"] == "studentnickname"
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+    assert User.objects.filter(nickname="studentnickname").count() == 2
+
+
+@pytest.mark.django_db
 def test_사용자는_올바른_인증으로_로그인을_할_수_있다(client, user):
     url = reverse("rest_login")
 
