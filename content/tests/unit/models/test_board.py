@@ -51,7 +51,7 @@ def test_사용자는_보드에_좋아요를_추가할_수_있다():
 
     board.like(user)
 
-    assert board.likes().filter(user=user).exists()
+    assert board.likes.filter(user=user).exists()
     assert board.is_liked(user) is True
     assert board.get_liked_users() == [user]
     assert board.like_count() == 1
@@ -68,7 +68,7 @@ def test_사용자는_보드에_좋아요를_취소할_수_있다():
 
     board.like(user)
 
-    assert board.likes().filter(user=user).exists()
+    assert board.likes.filter(user=user).exists()
     assert board.is_liked(user) is True
     assert board.get_liked_users() == [user]
     assert board.like_count() == 1

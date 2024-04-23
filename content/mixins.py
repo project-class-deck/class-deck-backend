@@ -25,7 +25,7 @@ class Likeable(models.Model):
         return self.likes.filter(user=user).exists()
 
     def get_liked_users(self):
-        return [like.user for like in self.likes]
+        return [like.user for like in self.likes.only("user").all()]
 
     def like(self, user):
         """
