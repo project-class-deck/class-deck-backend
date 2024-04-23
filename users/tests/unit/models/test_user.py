@@ -1,22 +1,19 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
 
 User = get_user_model()
 
 
-@pytest.fixture
-def user():
-    test_user = User.objects.create_user(
+@pytest.mark.django_db
+def test_user를_생성할_수_있다():
+    user = User.objects.create_user(
         username="testuser",
         email="testuser@example.com",
         password="testpassword123",
         nickname="testnickname",
     )
-    return test_user
 
-
-@pytest.mark.django_db
-def test_new_user(user):
     assert user.username == "testuser"
     assert user.email == "testuser@example.com"
     assert user.nickname == "testnickname"
@@ -26,7 +23,65 @@ def test_new_user(user):
 
 
 @pytest.mark.django_db
-def test_new_superuser():
+def test_username을_중복해서_생성할_수_없다():
+    User.objects.create_user(
+        username="testuser",
+        email="testuser@example.com",
+        password="testpassword123",
+        nickname="testnickname",
+    )
+
+    with pytest.raises(IntegrityError):
+        User.objects.create_user(
+            username="testuser",
+            email="testuser1@example.com",
+            password="testpassword123",
+            nickname="testnickname1",
+        )
+
+
+@pytest.mark.django_db
+def test_닉네임을_중복해서_생성할_수_있다():
+    User.objects.create_user(
+        username="testuser",
+        email="testuser@example.com",
+        password="testpassword123",
+        nickname="testnickname",
+    )
+
+    try:
+        User.objects.create_user(
+            username="testuser1",
+            email="testuser1@example.com",
+            password="testpassword123",
+            nickname="testnickname",
+        )
+    except IntegrityError:
+        pytest.fail("IntegrityError 예외가 발생했습니다.")
+
+
+@pytest.mark.django_db
+def test_이메일을_중복해서_생성할_수_있다():
+    User.objects.create_user(
+        username="testuser",
+        email="testuser@example.com",
+        password="testpassword123",
+        nickname="testnickname",
+    )
+
+    try:
+        User.objects.create_user(
+            username="testuser1",
+            email="testuser@example.com",
+            password="testpassword123",
+            nickname="testnickname1",
+        )
+    except IntegrityError:
+        pytest.fail("IntegrityError 예외가 발생했습니다.")
+
+
+@pytest.mark.django_db
+def test_superuser를_생성할_수_있다():
     User = get_user_model()
     admin_user = User.objects.create_superuser(
         username="superadmin",
