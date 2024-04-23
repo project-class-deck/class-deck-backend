@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Board(Likeable, models.Model):
     title = models.CharField(max_length=255)
-    introduction = models.TextField()
+    description = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boards")
 
     created_at = models.DateTimeField(auto_now_add=True)

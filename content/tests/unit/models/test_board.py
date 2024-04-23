@@ -13,12 +13,12 @@ def test_보드를_생성할_수_있다():
     board = Board.objects.create(
         owner=user,
         title="new board",
-        introduction="it's new board",
+        description="it's new board",
     )
 
     assert board.owner == user
     assert board.title == "new board"
-    assert board.introduction == "it's new board"
+    assert board.description == "it's new board"
 
     assert board.created_at is not None
     assert board.updated_at is not None
@@ -30,12 +30,12 @@ def test_보드를_생성하면_카드가_자동으로_생성된다():
     board = Board.objects.create(
         owner=user,
         title="new board",
-        introduction="it's new board",
+        description="it's new board",
     )
 
     assert board.owner == user
     assert board.title == "new board"
-    assert board.introduction == "it's new board"
+    assert board.description == "it's new board"
 
     assert board.cards.count() == 504
 
@@ -46,7 +46,7 @@ def test_사용자는_보드에_좋아요를_추가할_수_있다():
     board = Board.objects.create(
         owner=user,
         title="new board",
-        introduction="it's new board",
+        description="it's new board",
     )
 
     board.like(user)
@@ -63,7 +63,7 @@ def test_사용자는_보드에_좋아요를_취소할_수_있다():
     board = Board.objects.create(
         owner=user,
         title="new board",
-        introduction="it's new board",
+        description="it's new board",
     )
 
     board.like(user)
@@ -84,7 +84,7 @@ def test_사용자가_삭제되면_사용자의_보드도_삭제된다():
     board = Board.objects.create(
         owner=user,
         title="new board",
-        introduction="it's new board",
+        description="it's new board",
     )
 
     user.delete()

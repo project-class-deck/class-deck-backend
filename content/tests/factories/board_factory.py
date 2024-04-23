@@ -11,7 +11,7 @@ class BoardFactory(DjangoModelFactory):
         skip_postgeneration_save = True
 
     title = factory.Faker("sentence", nb_words=4)
-    introduction = factory.Faker("sentence", nb_words=10)
+    description = factory.Faker("sentence", nb_words=10)
     owner = factory.SubFactory(UserFactory)
 
     created_at = factory.Faker("date_time_this_month")
