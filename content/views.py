@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Board, Comment, Like, Post
+from .models import Board, Comment, Post
 from .serializers import BoardSerializer, CommentSerializer, PostSerializer
 
 
@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="like")
     def like_post(self, request, pk=None):
         post = get_object_or_404(Post, pk=pk)
-        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        created, like = post.like(request.user)
 
         if created:
             return Response({"status": "liked"})
