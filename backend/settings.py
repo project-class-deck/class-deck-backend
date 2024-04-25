@@ -184,20 +184,27 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": env("LOG_PATH", default=".django.log"),
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "INFO",
             "propagate": True,
         },
     },
 }
+
+if env("DEBUG", default="True") == "False":
+    LOGGING["handlers"]["file"] = {
+        "level": "INFO",
+        "class": "logging.FileHandler",
+        "filename": env("LOG_PATH", default=".django.log"),
+    }
+    LOGGING["loggers"]["django"]["handlers"] = ["file"]
 
 # drf spectacular - https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
 SPECTACULAR_SETTINGS = {
