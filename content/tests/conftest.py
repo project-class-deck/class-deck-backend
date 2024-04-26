@@ -5,7 +5,6 @@ from django.db import connections
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_teardown(item, nextitem):
-    # This will run after each test in any test file
     cleanup_databases()
 
 

@@ -19,12 +19,12 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
 
 # CORS 관련 추가
-CORS_ORIGIN_WHITELIST = env.list(
+CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ORIGIN_WHITELIST",
     default=["http://127.0.0.1:3000", "http://localhost:3000"],
 )
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -122,6 +122,9 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ),
 }
 
 JWT_AUTH_COOKIE = "myhim-jwt"
@@ -132,13 +135,13 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
     "USE_JWT": True,
     "JWT_AUTH_SECURE": False,
-    "JWT_AUTH_HTTPONLY": False,
-    "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
+    "JWT_AUTH_HTTPONLY": True,
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailSerializer",
     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -184,20 +187,27 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": env("LOG_PATH", default=".django.log"),
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "INFO",
             "propagate": True,
         },
     },
 }
+
+if env("DEBUG", default="True") == "False":
+    LOGGING["handlers"]["file"] = {
+        "level": "INFO",
+        "class": "logging.FileHandler",
+        "filename": env("LOG_PATH", default=".django.log"),
+    }
+    LOGGING["loggers"]["django"]["handlers"] = ["file"]
 
 # drf spectacular - https://drf-spectacular.readthedocs.io/en/latest/readme.html#installation
 SPECTACULAR_SETTINGS = {

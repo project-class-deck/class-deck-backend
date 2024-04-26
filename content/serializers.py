@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Board, Comment, Post
+from .models import Board, Card, Comment, Post
 
 
 # 보드 관련 시리얼라이저
@@ -14,6 +14,12 @@ class BoardSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
+        fields = "__all__"
+
+
+class CardCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
         fields = "__all__"
 
 
