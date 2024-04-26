@@ -1,23 +1,36 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
 
-from .models import Board, Comment, Post
-from .serializers import BoardSerializer, CommentSerializer, PostSerializer
+from .models import Board, Card, Comment, Post
+from .permissions import IsAuthorOrReadOnly
+from .serializers import (
+    BoardSerializer,
+    CardCreateSerializer,
+    CommentSerializer,
+    PostSerializer,
+)
 
 
 class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
+    permission_classes = (
+        DjangoModelPermissionsOrAnonReadOnly,
+        IsAuthorOrReadOnly,
+    )
 
 
-# 포스트 뷰셋
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = (
+        DjangoModelPermissionsOrAnonReadOnly,
+        IsAuthorOrReadOnly,
+    )
 
-    # PostViewSet 내부
     @action(detail=True, methods=["post"], url_path="like")
     def like_post(self, request, pk=None):
         post = get_object_or_404(Post, pk=pk)
@@ -30,10 +43,26 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response({"status": "unliked"})
 
 
+class CardCreateAPIView(generics.CreateAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardCreateSerializer
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 # 코멘트 뷰셋
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = (
+        DjangoModelPermissionsOrAnonReadOnly,
+        IsAuthorOrReadOnly,
+    )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

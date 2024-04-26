@@ -26,6 +26,8 @@ CORS_ORIGIN_WHITELIST = env.list(
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_CREDENTIALS = True
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -122,6 +124,9 @@ REST_FRAMEWORK = {
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ),
 }
 
 JWT_AUTH_COOKIE = "myhim-jwt"
@@ -132,13 +137,13 @@ REST_AUTH = {
     "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
     "USE_JWT": True,
     "JWT_AUTH_SECURE": False,
-    "JWT_AUTH_HTTPONLY": False,
-    "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
+    "JWT_AUTH_HTTPONLY": True,
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailSerializer",
     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
