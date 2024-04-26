@@ -19,12 +19,10 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
 
 # CORS 관련 추가
-CORS_ORIGIN_WHITELIST = env.list(
+CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ORIGIN_WHITELIST",
     default=["http://127.0.0.1:3000", "http://localhost:3000"],
 )
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
