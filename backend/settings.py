@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     "corsheaders",
     # Third-party
     "rest_framework",
-    "rest_framework.authtoken",
     "dj_rest_auth",
     "drf_spectacular",
     # Contrib
@@ -138,6 +137,7 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": True,
     "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailSerializer",
     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
+    "TOKEN_MODEL": None,
 }
 
 SIMPLE_JWT = {
