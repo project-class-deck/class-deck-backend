@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 
-from users.tests.conftest import set_credentials
 from users.tests.factories.user_factory import UserFactory
 
 User = get_user_model()
@@ -12,14 +11,6 @@ User = get_user_model()
 
 @pytest.mark.django_db
 class TestUserAuthentication:
-
-    @pytest.fixture
-    def user(self):
-        test_user = User.objects.create_user(
-            username="john", email="john@example.com", password="s3cr3t"
-        )
-        return test_user
-
     @pytest.fixture
     def no_login(self):
         return APIClient()
@@ -101,14 +92,16 @@ class TestUserAuthentication:
 
         assert User.objects.filter(nickname="studentnickname").count() == 2
 
-    def test_사용자는_올바른_인증으로_로그인을_할_수_있다(self, user):
-        client = APIClient()
+    def test_사용자는_올바른_인증으로_로그인을_할_수_있다(self, no_login):
+        User.objects.create_user(
+            username="john", email="john@example.com", password="s3cr3t"
+        )
 
         url = reverse("rest_login")
 
         data = {"username": "john", "password": "s3cr3t"}
 
-        response = client.post(url, data)
+        response = no_login.post(url, data)
 
         assert response.status_code == status.HTTP_200_OK
         assert "access" in response.data
@@ -130,7 +123,11 @@ class TestUserAuthentication:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non_field_errors" in response.data
 
-    def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(self, no_login, user):
+    def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(self, no_login):
+        User.objects.create_user(
+            username="john", email="john@example.com", password="s3cr3t"
+        )
+
         response = no_login.post(
             reverse("student-register"),
             {
@@ -151,8 +148,8 @@ class TestUserAuthentication:
         assert "username" in response.data
         assert "email" in response.data
 
-    def test_사용자는_자신의_정보를_요청할_수_있다(self):
-        user = UserFactory(username="john", nickname="john")
+    def test_사용자는_자신의_정보를_요청할_수_있다(self, set_credentials):
+        user = UserFactory(username="john", email="john@example.com", nickname="john")
 
         client = set_credentials(user)
 
