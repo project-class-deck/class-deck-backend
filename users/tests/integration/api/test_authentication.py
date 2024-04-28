@@ -1,5 +1,4 @@
 import pytest
-from dj_rest_auth.tests.mixins import APIClient
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
@@ -11,12 +10,8 @@ User = get_user_model()
 
 @pytest.mark.django_db
 class TestUserAuthentication:
-    @pytest.fixture
-    def no_login(self):
-        return APIClient()
-
-    def test_가입할_할_수_있다(self, no_login):
-        response = no_login.post(
+    def test_가입할_할_수_있다(self, client):
+        response = client.post(
             reverse("user-register"),
             {
                 "username": "testuser",
@@ -41,8 +36,8 @@ class TestUserAuthentication:
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_학생은_닉네임만_입력해서_가입할_할_수_있다(self, no_login):
-        response = no_login.post(
+    def test_학생은_닉네임만_입력해서_가입할_할_수_있다(self, client):
+        response = client.post(
             reverse("student-register"),
             {
                 "nickname": "studentnickname",
@@ -61,8 +56,8 @@ class TestUserAuthentication:
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_학생은_닉네임을_중복해서_가입할_할_수_있다(self, no_login):
-        response = no_login.post(
+    def test_학생은_닉네임을_중복해서_가입할_할_수_있다(self, client):
+        response = client.post(
             reverse("student-register"),
             {
                 "nickname": "studentnickname",
@@ -77,7 +72,7 @@ class TestUserAuthentication:
 
         assert User.objects.filter(nickname="studentnickname").exists()
 
-        response = no_login.post(
+        response = client.post(
             reverse("student-register"),
             {
                 "nickname": "studentnickname",
@@ -92,7 +87,7 @@ class TestUserAuthentication:
 
         assert User.objects.filter(nickname="studentnickname").count() == 2
 
-    def test_사용자는_올바른_인증으로_로그인을_할_수_있다(self, no_login):
+    def test_사용자는_올바른_인증으로_로그인을_할_수_있다(self, client):
         User.objects.create_user(
             username="john", email="john@example.com", password="s3cr3t"
         )
@@ -101,7 +96,7 @@ class TestUserAuthentication:
 
         data = {"username": "john", "password": "s3cr3t"}
 
-        response = no_login.post(url, data)
+        response = client.post(url, data)
 
         assert response.status_code == status.HTTP_200_OK
         assert "access" in response.data
@@ -113,22 +108,22 @@ class TestUserAuthentication:
 
         assert User.objects.filter(username="john").exists()
 
-    def test_사용자는_올바르지_않은_인증으로는_로그인을_할_수_없다(self, no_login):
+    def test_사용자는_올바르지_않은_인증으로는_로그인을_할_수_없다(self, client):
         url = reverse("rest_login")
 
         data = {"username": "john", "password": "wrongpassword"}
 
-        response = no_login.post(url, data)
+        response = client.post(url, data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non_field_errors" in response.data
 
-    def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(self, no_login):
+    def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(self, client):
         User.objects.create_user(
             username="john", email="john@example.com", password="s3cr3t"
         )
 
-        response = no_login.post(
+        response = client.post(
             reverse("student-register"),
             {
                 "nickname": "studentnickname",
@@ -138,7 +133,7 @@ class TestUserAuthentication:
 
         access = response.data["access"]
 
-        response = no_login.get(
+        response = client.get(
             reverse("rest_user_details"), HTTP_AUTHORIZATION=f"Bearer {access}"
         )
 
