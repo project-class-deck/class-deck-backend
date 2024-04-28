@@ -2,7 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 
 from content.models import Board
-from users.tests.factories.user_factory import UserFactory
+from users.tests.factories import UserFactory
 
 User = get_user_model()
 
@@ -11,12 +11,12 @@ User = get_user_model()
 def test_보드를_생성할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
-        owner=user,
+        author=user,
         title="new board",
         description="it's new board",
     )
 
-    assert board.owner == user
+    assert board.author == user
     assert board.title == "new board"
     assert board.description == "it's new board"
 
@@ -27,13 +27,17 @@ def test_보드를_생성할_수_있다():
 @pytest.mark.django_db
 def test_보드를_생성하면_카드가_자동으로_생성된다():
     user = UserFactory()
-    board = Board.objects.create(
-        owner=user,
+    Board.objects.create(
+        author=user,
         title="new board",
         description="it's new board",
     )
 
-    assert board.owner == user
+    board = Board.objects.prefetch_related("cards").get(
+        author=user, title="new board", description="it's new board"
+    )
+
+    assert board.author == user
     assert board.title == "new board"
     assert board.description == "it's new board"
 
@@ -44,7 +48,7 @@ def test_보드를_생성하면_카드가_자동으로_생성된다():
 def test_사용자는_보드에_좋아요를_추가할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
-        owner=user,
+        author=user,
         title="new board",
         description="it's new board",
     )
@@ -61,7 +65,7 @@ def test_사용자는_보드에_좋아요를_추가할_수_있다():
 def test_사용자는_보드에_좋아요를_취소할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
-        owner=user,
+        author=user,
         title="new board",
         description="it's new board",
     )
@@ -82,7 +86,7 @@ def test_사용자는_보드에_좋아요를_취소할_수_있다():
 def test_사용자가_삭제되면_사용자의_보드도_삭제된다():
     user = UserFactory()
     board = Board.objects.create(
-        owner=user,
+        author=user,
         title="new board",
         description="it's new board",
     )

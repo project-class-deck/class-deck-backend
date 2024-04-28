@@ -5,9 +5,9 @@ from .models import Board, Card, Comment, Post
 
 @admin.register(Board)
 class BoardAdmin(admin.ModelAdmin):
-    list_display = ("title", "owner")
-    search_fields = ("title", "owner")
-    list_filter = ("owner",)
+    list_display = ("title", "author")
+    search_fields = ("title", "author")
+    list_filter = ("author",)
     date_hierarchy = "created_at"
 
 
