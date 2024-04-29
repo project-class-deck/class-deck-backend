@@ -36,7 +36,7 @@ class TestUserAuthentication:
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_학생은_닉네임만_입력해서_가입할_할_수_있다(self, client):
+    def test_닉네임_사용자는_닉네임만_입력해서_가입할_할_수_있다(self, client):
         response = client.post(
             reverse("student-register"),
             {
@@ -56,7 +56,7 @@ class TestUserAuthentication:
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_학생은_닉네임을_중복해서_가입할_할_수_있다(self, client):
+    def test_닉네임_사용자는_닉네임을_중복해서_가입할_할_수_있다(self, client):
         response = client.post(
             reverse("student-register"),
             {
@@ -118,7 +118,7 @@ class TestUserAuthentication:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non_field_errors" in response.data
 
-    def test_학생은_비밀번호_없이도_인증정보를_제공할_수_있다(self, client):
+    def test_닉네임_사용자는_비밀번호_없이도_인증정보를_제공할_수_있다(self, client):
         User.objects.create_user(
             username="john", email="john@example.com", password="s3cr3t"
         )
