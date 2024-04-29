@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
@@ -28,6 +29,14 @@ class TestUserAuthentication:
         assert "access" in response.data
         assert "refresh" in response.data
 
+        access_cookie = response.cookies[settings.JWT_AUTH_COOKIE]
+        assert access_cookie["httponly"]
+        assert access_cookie["samesite"] == "Lax"
+
+        refresh_cookie = response.cookies[settings.JWT_AUTH_REFRESH_COOKIE]
+        assert refresh_cookie["httponly"]
+        assert refresh_cookie["samesite"] == "Lax"
+
         assert User.objects.filter(username="testuser").exists()
         test_user = User.objects.get(username="testuser")
 
@@ -49,6 +58,14 @@ class TestUserAuthentication:
         assert response.data["nickname"] == "studentnickname"
         assert "access" in response.data
         assert "refresh" in response.data
+
+        access_cookie = response.cookies[settings.JWT_AUTH_COOKIE]
+        assert access_cookie["httponly"]
+        assert access_cookie["samesite"] == "Lax"
+
+        refresh_cookie = response.cookies[settings.JWT_AUTH_REFRESH_COOKIE]
+        assert refresh_cookie["httponly"]
+        assert refresh_cookie["samesite"] == "Lax"
 
         assert User.objects.filter(nickname="studentnickname").exists()
         test_user = User.objects.get(nickname="studentnickname")
@@ -101,6 +118,14 @@ class TestUserAuthentication:
         assert response.status_code == status.HTTP_200_OK
         assert "access" in response.data
         assert "refresh" in response.data
+
+        access_cookie = response.cookies[settings.JWT_AUTH_COOKIE]
+        assert access_cookie["httponly"]
+        assert access_cookie["samesite"] == "Lax"
+
+        refresh_cookie = response.cookies[settings.JWT_AUTH_REFRESH_COOKIE]
+        assert refresh_cookie["httponly"]
+        assert refresh_cookie["samesite"] == "Lax"
 
         login_user = response.data["user"]
         assert login_user["username"] == "john"
