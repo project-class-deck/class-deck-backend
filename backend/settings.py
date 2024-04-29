@@ -231,3 +231,5 @@ SPECTACULAR_SETTINGS = {
         }
     },
 }
+
+DEFAULT_TTL = 60 * 60 * 4
