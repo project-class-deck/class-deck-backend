@@ -146,11 +146,11 @@ class TestUserAuthentication:
     def test_사용자는_자신의_정보를_요청할_수_있다(self, set_credentials):
         user = UserFactory(username="john", email="john@example.com", nickname="john")
 
-        client = set_credentials(user)
+        user_client = set_credentials(user)
 
         url = reverse("rest_user_details")
 
-        response = client.get(url)
+        response = user_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["username"] == "john"
