@@ -8,24 +8,19 @@ User = get_user_model()
 def create_permission_group_for_user():
     group = Group.objects.create(name="User")
 
-    group.permissions.set(
-        [
-            Permission.objects.get(codename="add_board"),
-            Permission.objects.get(codename="change_board"),
-            Permission.objects.get(codename="add_post"),
-            Permission.objects.get(codename="change_post"),
-        ]
+    permissions = Permission.objects.filter(
+        codename__in=["add_board", "change_board", "add_post", "change_post"]
     )
+
+    group.permissions.set(permissions)
 
 
 def create_permission_group_for_guest():
     group = Group.objects.create(name="Guest")
-    group.permissions.set(
-        [
-            Permission.objects.get(codename="add_post"),
-            Permission.objects.get(codename="change_post"),
-        ]
-    )
+
+    permissions = Permission.objects.filter(codename__in=["add_post", "change_post"])
+
+    group.permissions.set(permissions)
 
 
 class Command(BaseCommand):
