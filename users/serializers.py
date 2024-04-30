@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from users.models import Guest
+
 User = get_user_model()
 
 
@@ -50,11 +52,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class GuestRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Guest
         fields = ("id", "nickname")
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = Guest.objects.create_user(
             username=uuid.uuid4().hex[:30],
             nickname=validated_data["nickname"],
         )

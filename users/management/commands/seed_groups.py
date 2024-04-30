@@ -15,6 +15,10 @@ def create_permission_group_for_user():
             "delete_board",
             "add_post",
             "change_post",
+            "delete_post",
+            "add_comment",
+            "change_comment",
+            "delete_comment",
         ]
     )
 
@@ -24,7 +28,16 @@ def create_permission_group_for_user():
 def create_permission_group_for_guest():
     group = Group.objects.create(name="Guest")
 
-    permissions = Permission.objects.filter(codename__in=["add_post", "change_post"])
+    permissions = Permission.objects.filter(
+        codename__in=[
+            "add_post",
+            "change_post",
+            "delete_post",
+            "add_comment",
+            "change_comment",
+            "delete_comment",
+        ]
+    )
 
     group.permissions.set(permissions)
 
