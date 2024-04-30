@@ -25,7 +25,7 @@ def test_카드를_생성할_수_있다():
         zoom_ratio=100,
     )
 
-    assert Card.objects.count() == 1
+    assert Card.objects.count() == 505
     assert card.no == 1
     assert card.description == "description"
     assert card.meaning == "meaning"

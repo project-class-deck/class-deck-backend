@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from ..mixins import Commentable, CommentableManager, Likeable, LikeableManager
+from . import Board
 from .card import Card
 
 User = get_user_model()
@@ -9,6 +10,7 @@ User = get_user_model()
 
 class Post(Commentable, Likeable, models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="posts")
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="posts")
 
     title = models.CharField(max_length=255)

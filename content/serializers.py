@@ -1,20 +1,59 @@
+from django.db.models import Q
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from .models import Board, Card, Comment, Post
 
 
-# 보드 관련 시리얼라이저
-class BoardSerializer(serializers.ModelSerializer):
+class BoardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = "__all__"  # 모든 필드를 포함
+        fields = ["title", "description", "author"]
+        read_only_fields = ("created_at", "updated_at")
 
 
-# 포스트 시리얼라이저
+class BoardUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Board
+        fields = ["title", "description", "author"]
+        read_only_fields = ("author", "created_at", "updated_at")
+
+
+class CardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        # TODO id도 포함시키기
+        exclude = ("id", "board", "image", "created_at", "updated_at")
+
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+
+class BoardDetailSerializer(BoardCreateSerializer):
+    cards = SerializerMethodField()
+    posts = PostSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Board
+        fields = [
+            "id",
+            "title",
+            "description",
+            "author",
+            "cards",
+            "posts",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ("author", "created_at", "updated_at")
+
+    def get_cards(self, obj):
+        cards = Card.objects.filter(Q(board=obj) | Q(board__isnull=True))
+
+        return CardSerializer(cards, many=True).data
 
 
 class CardCreateSerializer(serializers.ModelSerializer):

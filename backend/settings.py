@@ -3,6 +3,8 @@ from pathlib import Path
 
 import environ
 
+from backend.constants import *  # noqa: F403,F401
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
@@ -32,11 +34,11 @@ INSTALLED_APPS = [
     # First-party
     "users",
     "content",
-    "corsheaders",
+    "core",
     # Third-party
-    "rest_framework",
-    "rest_framework.authtoken",
+    "corsheaders",
     "dj_rest_auth",
+    "rest_framework",
     "drf_spectacular",
     # Contrib
     "django.contrib.admin",
@@ -128,16 +130,19 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH_COOKIE = "myhim-jwt"
+JWT_AUTH_REFRESH_COOKIE = f"{JWT_AUTH_COOKIE}-refresh"
 
 REST_AUTH = {
     "JWT_AUTH_COOKIE": JWT_AUTH_COOKIE,
-    "JWT_AUTH_REFRESH_COOKIE": f"{JWT_AUTH_COOKIE}-refresh",
+    "JWT_AHT_ACCESS_TOKEN_PATH": "/",
+    "JWT_AUTH_REFRESH_COOKIE": JWT_AUTH_REFRESH_COOKIE,
     "JWT_AUTH_REFRESH_COOKIE_PATH": "/",
     "USE_JWT": True,
     "JWT_AUTH_SECURE": False,
     "JWT_AUTH_HTTPONLY": True,
     "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailSerializer",
     "LOGIN_SERIALIZER": "users.serializers.UserLoginSerializer",
+    "TOKEN_MODEL": None,
 }
 
 SIMPLE_JWT = {
