@@ -9,7 +9,13 @@ def create_permission_group_for_user():
     group = Group.objects.create(name="User")
 
     permissions = Permission.objects.filter(
-        codename__in=["add_board", "change_board", "add_post", "change_post"]
+        codename__in=[
+            "add_board",
+            "change_board",
+            "delete_board",
+            "add_post",
+            "change_post",
+        ]
     )
 
     group.permissions.set(permissions)
