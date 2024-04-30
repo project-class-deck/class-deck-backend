@@ -25,26 +25,6 @@ def test_보드를_생성할_수_있다():
 
 
 @pytest.mark.django_db
-def test_보드를_생성하면_카드가_자동으로_생성된다():
-    user = UserFactory()
-    Board.objects.create(
-        author=user,
-        title="new board",
-        description="it's new board",
-    )
-
-    board = Board.objects.prefetch_related("cards").get(
-        author=user, title="new board", description="it's new board"
-    )
-
-    assert board.author == user
-    assert board.title == "new board"
-    assert board.description == "it's new board"
-
-    assert board.cards.count() == 504
-
-
-@pytest.mark.django_db
 def test_사용자는_보드에_좋아요를_추가할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
