@@ -5,16 +5,24 @@ from rest_framework.fields import SerializerMethodField
 from .models import Board, Card, Comment, Post
 
 
-class BoardSerializer(serializers.ModelSerializer):
+class BoardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
         fields = ["title", "description", "author"]
         read_only_fields = ("created_at", "updated_at")
 
 
+class BoardUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Board
+        fields = ["title", "description", "author"]
+        read_only_fields = ("author", "created_at", "updated_at")
+
+
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
+        # TODO id도 포함시키기
         exclude = ("id", "board", "image", "created_at", "updated_at")
 
 
@@ -24,7 +32,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BoardDetailSerializer(BoardSerializer):
+class BoardDetailSerializer(BoardCreateSerializer):
     cards = SerializerMethodField()
     posts = PostSerializer(many=True, read_only=True)
 
@@ -40,7 +48,7 @@ class BoardDetailSerializer(BoardSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ("created_at", "updated_at")
+        read_only_fields = ("author", "created_at", "updated_at")
 
     def get_cards(self, obj):
         cards = Card.objects.filter(Q(board=obj) | Q(board__isnull=True))

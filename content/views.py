@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from .models import Board, Card, Comment, Post
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
+    BoardCreateSerializer,
     BoardDetailSerializer,
-    BoardSerializer,
+    BoardUpdateSerializer,
     CardCreateSerializer,
     CommentSerializer,
     PostSerializer,
@@ -17,7 +18,7 @@ from .serializers import (
 
 class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
-    serializer_class = BoardSerializer
+    serializer_class = BoardCreateSerializer
     permission_classes = (
         DjangoModelPermissionsOrAnonReadOnly,
         IsAuthorOrReadOnly,
@@ -31,6 +32,8 @@ class BoardViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "retrieve":
             return BoardDetailSerializer
+        elif self.action == "update":
+            return BoardUpdateSerializer
 
         return super().get_serializer_class()
 
