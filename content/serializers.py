@@ -5,11 +5,10 @@ from rest_framework.fields import SerializerMethodField
 from .models import Board, Card, Comment, Post
 
 
-# 보드 관련 시리얼라이저
 class BoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = "__all__"
+        fields = ["title", "description", "author"]
         read_only_fields = ("created_at", "updated_at")
 
 
