@@ -6,7 +6,7 @@ class Command(BaseCommand):
     help = "Runs all seed commands from each app."
 
     def handle(self, *args, **options):
-        models_to_seed = ["users", "card"]
+        models_to_seed = ["users", "groups", "cards"]
 
         for model in models_to_seed:
             try:
