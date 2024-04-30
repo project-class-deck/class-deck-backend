@@ -7,7 +7,7 @@ from rest_framework import status
 from content.models import Card
 from content.serializers import PostSerializer
 from content.tests.factories import BoardFactory, PostFactory
-from users.tests.factories import GuestUserFactory, UserFactory
+from users.tests.factories import GuestFactory, UserFactory
 
 
 @pytest.mark.django_db
@@ -35,7 +35,7 @@ class TestBoardListAPI:
         assert len(response.data) == 10
 
     def test_학생_사용자는_보드_목록을_볼_수_있다(self, set_credentials):
-        user = GuestUserFactory()
+        user = GuestFactory()
 
         guest_client = set_credentials(user)
 
@@ -112,13 +112,13 @@ class TestBoardDetailCardAPI:
     def test_게스트는_보드의_카드를_확인할_수_있다(
         self, set_credentials, cards_json_list
     ):
-        guest_user = GuestUserFactory()
+        guest = GuestFactory()
 
-        guest_user_client = set_credentials(guest_user)
+        guest_client = set_credentials(guest)
 
         url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
-        response = guest_user_client.get(url)
+        response = guest_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
@@ -170,8 +170,8 @@ class TestBoardDetailPostAPI:
     def test_게스트는_보드의_게시물을_확인할_수_있다(
         self, set_credentials, cards_json_list
     ):
-        guest_user = GuestUserFactory()
-        guest_user_client = set_credentials(guest_user)
+        guest = GuestFactory()
+        guest_client = set_credentials(guest)
 
         post = PostFactory(
             board=self.board,
@@ -182,7 +182,7 @@ class TestBoardDetailPostAPI:
 
         url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
-        response = guest_user_client.get(url)
+        response = guest_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data

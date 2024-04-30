@@ -9,6 +9,6 @@ class User(AbstractUser):
     )
 
 
-class GuestUser(User):
+class Guest(User):
     class Meta:
         proxy = True

@@ -1,1 +1,1 @@
-from .user_factory import GuestUserFactory, UserFactory  # noqa: F401
+from .user_factory import GuestFactory, UserFactory  # noqa: F401
