@@ -7,3 +7,8 @@ class User(AbstractUser):
     nickname = models.CharField(
         max_length=50, blank=False, null=False, verbose_name=_("닉네임")
     )
+
+
+class GuestUser(User):
+    class Meta:
+        proxy = True

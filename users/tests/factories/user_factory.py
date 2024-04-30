@@ -3,6 +3,8 @@ import uuid
 import factory
 from django.contrib.auth import get_user_model
 
+from users.models import GuestUser
+
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -15,9 +17,9 @@ class UserFactory(factory.django.DjangoModelFactory):
     nickname = factory.Faker("name")
 
 
-class NicknameUserFactory(factory.django.DjangoModelFactory):
+class GuestUserFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = get_user_model()
+        model = GuestUser
         skip_postgeneration_save = True
 
     username = uuid.uuid4().hex[:30]

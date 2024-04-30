@@ -48,7 +48,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return data
 
 
-class StudentRegistrationSerializer(serializers.ModelSerializer):
+class GuestRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "nickname")

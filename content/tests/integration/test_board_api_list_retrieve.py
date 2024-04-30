@@ -7,7 +7,7 @@ from rest_framework import status
 from content.models import Card
 from content.serializers import PostSerializer
 from content.tests.factories import BoardFactory, PostFactory
-from users.tests.factories import NicknameUserFactory, UserFactory
+from users.tests.factories import GuestUserFactory, UserFactory
 
 
 @pytest.mark.django_db
@@ -35,15 +35,15 @@ class TestBoardListAPI:
         assert len(response.data) == 10
 
     def test_학생_사용자는_보드_목록을_볼_수_있다(self, set_credentials):
-        user = NicknameUserFactory()
+        user = GuestUserFactory()
 
-        student_client = set_credentials(user)
+        guest_client = set_credentials(user)
 
         BoardFactory.create_batch(10)
 
         url = reverse("boards-list")
 
-        response = student_client.get(url)
+        response = guest_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 10
@@ -109,16 +109,16 @@ class TestBoardDetailCardAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
 
-    def test_닉네임_사용자는_보드의_카드를_확인할_수_있다(
+    def test_게스트는_보드의_카드를_확인할_수_있다(
         self, set_credentials, cards_json_list
     ):
-        nickname_user = NicknameUserFactory()
+        guest_user = GuestUserFactory()
 
-        nickname_user_client = set_credentials(nickname_user)
+        guest_user_client = set_credentials(guest_user)
 
         url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
-        response = nickname_user_client.get(url)
+        response = guest_user_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
@@ -167,11 +167,11 @@ class TestBoardDetailPostAPI:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data
 
-    def test_닉네임_사용자는_보드의_게시물을_확인할_수_있다(
+    def test_게스트는_보드의_게시물을_확인할_수_있다(
         self, set_credentials, cards_json_list
     ):
-        nickname_user = NicknameUserFactory()
-        nickname_user_client = set_credentials(nickname_user)
+        guest_user = GuestUserFactory()
+        guest_user_client = set_credentials(guest_user)
 
         post = PostFactory(
             board=self.board,
@@ -182,7 +182,7 @@ class TestBoardDetailPostAPI:
 
         url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
-        response = nickname_user_client.get(url)
+        response = guest_user_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data

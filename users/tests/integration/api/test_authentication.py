@@ -45,17 +45,17 @@ class TestUserAuthentication:
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_닉네임_사용자는_닉네임만_입력해서_가입할_할_수_있다(self, client):
+    def test_게스트는_닉네임만_입력해서_가입할_할_수_있다(self, client):
         response = client.post(
-            reverse("student-register"),
+            reverse("guest-register"),
             {
-                "nickname": "studentnickname",
+                "nickname": "guestnickname",
             },
             format="json",
         )
 
         assert response.status_code == 201
-        assert response.data["nickname"] == "studentnickname"
+        assert response.data["nickname"] == "guestnickname"
         assert "access" in response.data
         assert "refresh" in response.data
 
@@ -67,42 +67,42 @@ class TestUserAuthentication:
         assert refresh_cookie["httponly"]
         assert refresh_cookie["samesite"] == "Lax"
 
-        assert User.objects.filter(nickname="studentnickname").exists()
-        test_user = User.objects.get(nickname="studentnickname")
+        assert User.objects.filter(nickname="guestnickname").exists()
+        test_user = User.objects.get(nickname="guestnickname")
 
         assert test_user.is_active is True
         assert test_user.is_staff is False
 
-    def test_닉네임_사용자는_닉네임을_중복해서_가입할_할_수_있다(self, client):
+    def test_게스트는_닉네임을_중복해서_가입할_할_수_있다(self, client):
         response = client.post(
-            reverse("student-register"),
+            reverse("guest-register"),
             {
-                "nickname": "studentnickname",
+                "nickname": "guestnickname",
             },
             format="json",
         )
 
         assert response.status_code == 201
-        assert response.data["nickname"] == "studentnickname"
+        assert response.data["nickname"] == "guestnickname"
         assert "access" in response.data
         assert "refresh" in response.data
 
-        assert User.objects.filter(nickname="studentnickname").exists()
+        assert User.objects.filter(nickname="guestnickname").exists()
 
         response = client.post(
-            reverse("student-register"),
+            reverse("guest-register"),
             {
-                "nickname": "studentnickname",
+                "nickname": "guestnickname",
             },
             format="json",
         )
 
         assert response.status_code == 201
-        assert response.data["nickname"] == "studentnickname"
+        assert response.data["nickname"] == "guestnickname"
         assert "access" in response.data
         assert "refresh" in response.data
 
-        assert User.objects.filter(nickname="studentnickname").count() == 2
+        assert User.objects.filter(nickname="guestnickname").count() == 2
 
     def test_사용자는_올바른_인증으로_로그인을_할_수_있다(self, client):
         User.objects.create_user(
@@ -143,15 +143,15 @@ class TestUserAuthentication:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "non_field_errors" in response.data
 
-    def test_닉네임_사용자는_비밀번호_없이도_인증정보를_제공할_수_있다(self, client):
+    def test_게스트는_비밀번호_없이도_인증정보를_제공할_수_있다(self, client):
         User.objects.create_user(
             username="john", email="john@example.com", password="s3cr3t"
         )
 
         response = client.post(
-            reverse("student-register"),
+            reverse("guest-register"),
             {
-                "nickname": "studentnickname",
+                "nickname": "guestnickname",
             },
             format="json",
         )
@@ -164,7 +164,7 @@ class TestUserAuthentication:
 
         assert response.status_code == status.HTTP_200_OK
 
-        assert response.data["nickname"] == "studentnickname"
+        assert response.data["nickname"] == "guestnickname"
         assert "username" in response.data
         assert "email" in response.data
 
