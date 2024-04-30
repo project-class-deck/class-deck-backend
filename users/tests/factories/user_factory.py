@@ -15,7 +15,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     nickname = factory.Faker("name")
 
 
-class StudentFactory(factory.django.DjangoModelFactory):
+class NicknameUserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = get_user_model()
         skip_postgeneration_save = True
