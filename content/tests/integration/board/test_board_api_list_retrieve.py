@@ -84,13 +84,12 @@ def test_사용자는_보드의_정보를_확인할_수_있다(set_credentials, 
 class TestBoardDetailCardAPI:
     def setup_method(self):
         self.board = BoardFactory()
+        self.url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
     def test_비로그인_사용자는_보드의_카드를_확인할_수_있다(
         self, client, cards_json_list
     ):
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = client.get(url)
+        response = client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
@@ -102,9 +101,7 @@ class TestBoardDetailCardAPI:
 
         user_client = set_credentials(user)
 
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = user_client.get(url)
+        response = user_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
@@ -116,9 +113,7 @@ class TestBoardDetailCardAPI:
 
         guest_client = set_credentials(guest)
 
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = guest_client.get(url)
+        response = guest_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["cards"] == cards_json_list
@@ -129,6 +124,7 @@ class TestBoardDetailPostAPI:
     def setup_method(self):
         self.board = BoardFactory()
         self.card = Card.objects.get(pk=1)
+        self.url = reverse("boards-detail", kwargs={"pk": self.board.id})
 
     def test_비로그인_사용자는_보드의_게시물을_확인할_수_있다(
         self, client, cards_json_list
@@ -139,9 +135,7 @@ class TestBoardDetailPostAPI:
             board=self.board, card=card, title="제목입니다", content="글을 작성합니다"
         )
 
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = client.get(url)
+        response = client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data
@@ -160,9 +154,7 @@ class TestBoardDetailPostAPI:
             content="글을 작성합니다",
         )
 
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = user_client.get(url)
+        response = user_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data
@@ -180,9 +172,7 @@ class TestBoardDetailPostAPI:
             content="글을 작성합니다",
         )
 
-        url = reverse("boards-detail", kwargs={"pk": self.board.id})
-
-        response = guest_client.get(url)
+        response = guest_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data
