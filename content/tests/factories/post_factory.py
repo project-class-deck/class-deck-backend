@@ -2,6 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from content.models import Post
+from content.tests.factories import BoardFactory
 from content.tests.factories.card_factory import CardFactory
 
 
@@ -11,6 +12,7 @@ class PostFactory(DjangoModelFactory):
         skip_postgeneration_save = True
 
     card = factory.SubFactory(CardFactory)
+    board = factory.SubFactory(BoardFactory)
     author = factory.SubFactory("users.tests.factories.user_factory.UserFactory")
 
     title = factory.Faker("sentence", nb_words=4)

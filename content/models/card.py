@@ -7,7 +7,9 @@ User = get_user_model()
 
 
 class Card(models.Model):
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="cards")
+    board = models.ForeignKey(
+        Board, null=True, on_delete=models.CASCADE, related_name="cards"
+    )
     image = models.ImageField(upload_to="images/cards/", blank=True, null=True)
 
     no = models.PositiveIntegerField()
