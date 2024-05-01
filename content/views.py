@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, status, viewsets
 from rest_framework.generics import GenericAPIView, mixins
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
@@ -75,6 +75,11 @@ class CommentCreateAPIView(APIView):
         IsAuthorOrReadOnly,
     )
 
+    @extend_schema(
+        responses={
+            status.HTTP_200_OK: OpenApiResponse(response=CommentSerializer(many=True))
+        }
+    )
     def get(self, request, *args, **kwargs):
         content_type = get_object_or_404(
             ContentType, model=kwargs["model_slug"].lower()
