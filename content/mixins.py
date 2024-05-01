@@ -73,6 +73,14 @@ class Commentable(models.Model):
             content_type=ContentType.objects.get_for_model(self), object_id=self.id
         )
 
+    def comment(self, user, content):
+        return Comment.objects.create(
+            content_type=ContentType.objects.get_for_model(self),
+            object_id=self.id,
+            author=user,
+            content=content,
+        )
+
 
 class CommentableManager(models.Manager):
     def get_queryset(self):

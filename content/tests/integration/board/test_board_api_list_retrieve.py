@@ -164,7 +164,7 @@ class TestBoardDetailPostAPI:
         assert response.data["posts"][0]["date"] == post.created_at
         assert response.data["posts"][0]["thumbnail"] == post.card.image_front
         assert response.data["posts"][0]["content"] == post.content
-        assert response.data["posts"][0]["likes"] == post.likes.count()
+        assert response.data["posts"][0]["likes"] == post.like_count()
         assert response.data["posts"][0]["comments"] == post.comments.count()
 
     def test_게스트는_보드의_게시물을_확인할_수_있다(

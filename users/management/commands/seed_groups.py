@@ -19,6 +19,8 @@ def create_permission_group_for_user():
             "add_comment",
             "change_comment",
             "delete_comment",
+            "add_like",
+            "delete_like",
         ]
     )
 
@@ -36,6 +38,8 @@ def create_permission_group_for_guest():
             "add_comment",
             "change_comment",
             "delete_comment",
+            "add_like",
+            "delete_like",
         ]
     )
 
