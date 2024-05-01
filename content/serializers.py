@@ -90,7 +90,6 @@ class CardCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# 댓글 시리얼라이저
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -103,6 +102,14 @@ class CommentSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ("created_at", "updated_at")
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            "content",
+        ]
 
 
 class LikeSerializer(serializers.ModelSerializer):

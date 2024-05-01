@@ -5,7 +5,6 @@ from rest_framework import generics, status, viewsets
 from rest_framework.generics import GenericAPIView, mixins
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Board, Card, Comment, Like, Post
@@ -15,6 +14,7 @@ from .serializers import (
     BoardDetailSerializer,
     BoardUpdateSerializer,
     CardCreateSerializer,
+    CommentCreateSerializer,
     CommentSerializer,
     LikeSerializer,
     PostSerializer,
@@ -67,9 +67,9 @@ class CardCreateAPIView(generics.CreateAPIView):
 
 
 @extend_schema(tags=["Comments"])
-class CommentCreateAPIView(APIView):
+class CommentCreateAPIView(GenericAPIView):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = CommentCreateSerializer
     permission_classes = (
         DjangoModelPermissionsOrAnonReadOnly,
         IsAuthorOrReadOnly,
