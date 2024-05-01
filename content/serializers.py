@@ -1,4 +1,5 @@
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -27,9 +28,35 @@ class CardSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source="author.nickname")
+    date = serializers.ReadOnlyField(source="created_at")
+    thumbnail = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "author",
+            "date",
+            "thumbnail",
+            "content",
+            "likes",
+            "comments",
+            "is_public",
+            "updated_at",
+        ]
+
+    def get_thumbnail(self, obj) -> str:
+        return obj.card.image_front
+
+    def get_likes(self, obj) -> int:
+        return obj.likes.count()
+
+    def get_comments(self, obj) -> int:
+        return obj.comments.count()
 
 
 class BoardDetailSerializer(BoardCreateSerializer):
@@ -50,6 +77,7 @@ class BoardDetailSerializer(BoardCreateSerializer):
         ]
         read_only_fields = ("author", "created_at", "updated_at")
 
+    @extend_schema_field(CardSerializer(many=True))
     def get_cards(self, obj):
         cards = Card.objects.filter(Q(board=obj) | Q(board__isnull=True))
 

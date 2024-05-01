@@ -158,6 +158,14 @@ class TestBoardDetailPostAPI:
 
         assert response.status_code == status.HTTP_200_OK
         assert response.data["posts"] == PostSerializer([post], many=True).data
+        assert response.data["posts"][0]["id"] == post.id
+        assert response.data["posts"][0]["title"] == post.title
+        assert response.data["posts"][0]["author"] == post.author.nickname
+        assert response.data["posts"][0]["date"] == post.created_at
+        assert response.data["posts"][0]["thumbnail"] == post.card.image_front
+        assert response.data["posts"][0]["content"] == post.content
+        assert response.data["posts"][0]["likes"] == post.likes.count()
+        assert response.data["posts"][0]["comments"] == post.comments.count()
 
     def test_게스트는_보드의_게시물을_확인할_수_있다(
         self, set_credentials, cards_json_list
