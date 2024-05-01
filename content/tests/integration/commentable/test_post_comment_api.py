@@ -1,3 +1,4 @@
+import factory
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -85,3 +86,15 @@ class TestPostCommentAPI:
         response = guest_client.delete(url)
 
         assert response.status_code == status.HTTP_403_FORBIDDEN, response.data
+
+    def test_게시물에_대한_모든_댓글을_받아올_수_있다(self, client):
+        new_user = UserFactory()
+
+        for i in range(10):
+            self.post.comment(new_user, factory.Faker("sentence"))
+
+        url = reverse("comment", kwargs={"model_slug": "post", "pk": self.post.pk})
+
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK, response.data
