@@ -39,6 +39,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "card",
             "author",
             "date",
             "thumbnail",
