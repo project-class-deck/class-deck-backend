@@ -80,6 +80,10 @@ def test_사용자는_보드의_정보를_확인할_수_있다(set_credentials, 
     )
 
 
+def exclude_id_key(dictionary):
+    return [{k: v for k, v in card.items() if k != "id"} for card in dictionary]
+
+
 @pytest.mark.django_db
 class TestBoardDetailCardAPI:
     def setup_method(self):
@@ -92,7 +96,7 @@ class TestBoardDetailCardAPI:
         response = client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["cards"] == cards_json_list
+        assert exclude_id_key(response.data["cards"]) == cards_json_list
 
     def test_로그인_사용자는_보드의_카드를_확인할_수_있다(
         self, set_credentials, cards_json_list
@@ -104,7 +108,7 @@ class TestBoardDetailCardAPI:
         response = user_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["cards"] == cards_json_list
+        assert exclude_id_key(response.data["cards"]) == cards_json_list
 
     def test_게스트는_보드의_카드를_확인할_수_있다(
         self, set_credentials, cards_json_list
@@ -116,7 +120,7 @@ class TestBoardDetailCardAPI:
         response = guest_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["cards"] == cards_json_list
+        assert exclude_id_key(response.data["cards"]) == cards_json_list
 
 
 @pytest.mark.django_db

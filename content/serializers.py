@@ -23,8 +23,7 @@ class BoardUpdateSerializer(serializers.ModelSerializer):
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        # TODO id도 포함시키기
-        exclude = ("id", "board", "image", "created_at", "updated_at")
+        exclude = ("board", "image", "created_at", "updated_at")
 
 
 class PostSerializer(serializers.ModelSerializer):
