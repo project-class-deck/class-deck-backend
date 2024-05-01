@@ -2,10 +2,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status, viewsets
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, mixins
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Board, Card, Comment, Like, Post
 from .permissions import IsAuthorOrReadOnly
@@ -44,7 +45,12 @@ class BoardViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=["Posts"])
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet,
+):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (
