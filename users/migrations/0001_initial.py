@@ -130,4 +130,17 @@ class Migration(migrations.Migration):
                 ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
+        migrations.CreateModel(
+            name="Guest",
+            fields=[],
+            options={
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
+            },
+            bases=("users.user",),
+            managers=[
+                ("objects", django.contrib.auth.models.UserManager()),
+            ],
+        ),
     ]

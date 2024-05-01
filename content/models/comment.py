@@ -10,8 +10,8 @@ class Comment(models.Model):
     object_id = models.PositiveIntegerField()
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     content_object = GenericForeignKey("content_type", "object_id")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField(max_length=1000, null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=1000, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
