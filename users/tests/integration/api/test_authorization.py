@@ -84,8 +84,6 @@ class TestUserAuthorization:
     def test_게스트는_댓글과_관련된_권한이_있다(self, set_credentials):
         guest = GuestFactory()
 
-        print(guest.get_all_permissions())
-
         assert guest.has_perms(
             ["content.add_comment", "content.change_comment", "content.delete_comment"]
         )

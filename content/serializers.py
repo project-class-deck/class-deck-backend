@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from .models import Board, Card, Comment, Post
+from .models import Board, Card, Comment, Like, Post
 
 
 class BoardCreateSerializer(serializers.ModelSerializer):
@@ -53,7 +53,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.card.image_front
 
     def get_likes(self, obj) -> int:
-        return obj.likes.count()
+        return obj.like_count()
 
     def get_comments(self, obj) -> int:
         return obj.comments.count()
@@ -94,4 +94,19 @@ class CardCreateSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = [
+            "content_type",
+            "object_id",
+            "author",
+            "content",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ("created_at", "updated_at")
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ["content_type", "object_id", "user", "created_at"]
+        read_only_fields = ("created_at",)

@@ -13,3 +13,6 @@ class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("content_type", "object_id", "user")

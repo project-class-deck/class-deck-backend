@@ -1,10 +1,13 @@
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Board, Card, Comment, Post
+from .models import Board, Card, Comment, Like, Post
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     BoardCreateSerializer,
@@ -12,6 +15,7 @@ from .serializers import (
     BoardUpdateSerializer,
     CardCreateSerializer,
     CommentSerializer,
+    LikeSerializer,
     PostSerializer,
 )
 
@@ -63,15 +67,32 @@ class CardCreateAPIView(generics.CreateAPIView):
     serializer_class = CardCreateSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
 
+
+class CommentCreateAPIView(APIView):
+    queryset = Comment.objects.all()
+    permission_classes = (
+        DjangoModelPermissionsOrAnonReadOnly,
+        IsAuthorOrReadOnly,
+    )
+
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        content_type = get_object_or_404(
+            ContentType, model=kwargs["model_slug"].lower()
+        )
+        data = {
+            "author": request.user.id,
+            "content_type": content_type.id,
+            "object_id": kwargs["pk"],
+            "content": request.data["content"],
+        }
+
+        serializer = CommentSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# 코멘트 뷰셋
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentAPIView(generics.RetrieveDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (
@@ -79,5 +100,39 @@ class CommentViewSet(viewsets.ModelViewSet):
         IsAuthorOrReadOnly,
     )
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+
+class LikeAPIView(GenericAPIView):
+    queryset = Like.objects.all()
+    permission_classes = (
+        DjangoModelPermissionsOrAnonReadOnly,
+        IsAuthorOrReadOnly,
+    )
+
+    def post(self, request, *args, **kwargs):
+        content_type = get_object_or_404(
+            ContentType, model=kwargs["model_slug"].lower()
+        )
+        data = {
+            "user": request.user.id,
+            "content_type": content_type.id,
+            "object_id": kwargs["pk"],
+        }
+
+        serializer = LikeSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        content_type = get_object_or_404(
+            ContentType, model=kwargs["model_slug"].lower()
+        )
+        data = {
+            "content_type": content_type.id,
+            "object_id": kwargs["pk"],
+        }
+
+        instance = Like.objects.filter(**data).get()
+        self.check_object_permissions(request, instance)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
