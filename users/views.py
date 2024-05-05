@@ -7,7 +7,7 @@ from .models import User
 from .serializers import GuestRegistrationSerializer, UserRegistrationSerializer
 
 
-@extend_schema(tags=["auth"])
+@extend_schema(tags=["register"])
 class UserRegistrationAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
@@ -21,7 +21,7 @@ class UserRegistrationAPIView(generics.CreateAPIView):
         return response
 
 
-@extend_schema(tags=["auth"])
+@extend_schema(tags=["register"])
 class GuestRegistrationAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = GuestRegistrationSerializer
