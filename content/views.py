@@ -2,8 +2,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView, mixins
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (
+    DjangoModelPermissionsOrAnonReadOnly,
+    IsAuthenticated,
+)
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -42,6 +46,12 @@ class BoardViewSet(viewsets.ModelViewSet):
             return BoardUpdateSerializer
 
         return super().get_serializer_class()
+
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    def mine(self, request):
+        data = Board.objects.filter(author=request.user).all()
+        serializer = self.get_serializer(data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=["Posts"])
