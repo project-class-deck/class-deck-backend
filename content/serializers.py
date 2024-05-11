@@ -9,8 +9,19 @@ from .models import Board, Card, Comment, Like, Post
 class BoardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = ["title", "description", "author"]
+        fields = ["id", "title", "description", "author"]
         read_only_fields = ("created_at", "updated_at")
+
+        extra_kwargs = {
+            "author": {"write_only": True},
+        }
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+
+        res.update({"author": instance.author.nickname})
+
+        return res
 
 
 class BoardUpdateSerializer(serializers.ModelSerializer):
