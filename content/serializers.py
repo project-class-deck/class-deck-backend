@@ -91,17 +91,32 @@ class CardCreateSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source="author.id")
+
     class Meta:
         model = Comment
         fields = [
+            "id",
             "content_type",
             "object_id",
+            "user_id",
             "author",
             "content",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ("created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
+        extra_kwargs = {
+            "content_type": {"write_only": True},
+            "object_id": {"write_only": True},
+        }
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+
+        res.update({"author": instance.author.nickname})
+
+        return res
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):

@@ -97,7 +97,7 @@ class CommentCreateAPIView(GenericAPIView):
 
         comments = Comment.objects.filter(
             content_type=content_type, object_id=kwargs["pk"]
-        )
+        ).prefetch_related("author")
 
         serializer = CommentSerializer(comments, many=True)
 
