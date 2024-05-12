@@ -9,12 +9,12 @@ from .models import Board, Card, Comment, Like, Post
 class BoardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = ["id", "title", "description", "author"]
-        read_only_fields = ("created_at", "updated_at")
-
-        extra_kwargs = {
-            "author": {"write_only": True},
-        }
+        fields = [
+            "id",
+            "title",
+            "description",
+        ]
+        read_only_fields = ("author", "created_at", "updated_at")
 
     def to_representation(self, instance):
         res = super().to_representation(instance)
@@ -61,6 +61,8 @@ class PostSerializer(serializers.ModelSerializer):
             "is_public",
             "updated_at",
         ]
+
+        read_only_fields = ("author", "created_at", "updated_at")
 
     def get_thumbnail(self, obj) -> str:
         return obj.card.image_front
