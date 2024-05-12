@@ -37,7 +37,7 @@ class BoardViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.action == "retrieve":
             return Board.objects.prefetch_related("cards")
-        return super().get_queryset()
+        return super().get_queryset().order_by("-created_at")
 
     def get_serializer_class(self):
         if self.action == "retrieve":
