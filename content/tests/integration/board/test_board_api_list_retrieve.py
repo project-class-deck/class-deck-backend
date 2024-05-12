@@ -167,7 +167,12 @@ class TestBoardDetailPostAPI:
         assert response.data["posts"][0]["id"] == post.id
         assert response.data["posts"][0]["title"] == post.title
         assert response.data["posts"][0]["author"] == post.author.nickname
-        assert response.data["posts"][0]["created_at"] == post.created_at
+        assert (
+            response.data["posts"][0]["created_at"]
+            == post.created_at.astimezone(
+                datetime.timezone(datetime.timedelta(hours=9))
+            ).isoformat()
+        )
         assert response.data["posts"][0]["thumbnail"] == post.card.image_front
         assert response.data["posts"][0]["content"] == post.content
         assert response.data["posts"][0]["likes"] == post.like_count()
