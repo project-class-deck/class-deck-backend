@@ -1,0 +1,27 @@
+name: Deploy on Lightsail
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  stop-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Amazon Lightsail
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.SSH_ID }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            source ~/venv/bin/activate
+            cd ~/class-deck-backend
+            git pull
+            ps aux | grep gunicorn | grep -v grep | awk '{print $2}' | xargs kill -9
+            ./scripts/start_prod.sh
