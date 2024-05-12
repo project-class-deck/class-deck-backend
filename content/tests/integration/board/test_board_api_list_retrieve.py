@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from content.models import Card
+from content.models import Board, Card
 from content.serializers import PostSerializer
 from content.tests.factories import BoardFactory, PostFactory
 from users.tests.factories import GuestFactory, UserFactory
@@ -18,7 +18,7 @@ class TestBoardListAPI:
         response = client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 10
+        assert response.data["count"] == 10
 
     def test_로그인_사용자는_보드_목록을_볼_수_있다(self, set_credentials):
         user = UserFactory()
@@ -32,7 +32,7 @@ class TestBoardListAPI:
         response = user_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 10
+        assert response.data["count"] == 10
 
     def test_학생_사용자는_보드_목록을_볼_수_있다(self, set_credentials):
         user = GuestFactory()
@@ -45,8 +45,10 @@ class TestBoardListAPI:
 
         response = guest_client.get(url)
 
+        assert Board.objects.count() == 10
+
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 10
+        assert response.data["count"] == 10
 
 
 @pytest.mark.django_db
