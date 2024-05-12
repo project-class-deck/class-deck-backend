@@ -38,20 +38,22 @@ class CardSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source="author.nickname")
-    date = serializers.ReadOnlyField(source="created_at")
+    user_id = serializers.ReadOnlyField(source="author.id")
     thumbnail = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    is_public = serializers.BooleanField(default=True)
 
     class Meta:
         model = Post
         fields = [
             "id",
             "title",
+            "board",
             "card",
+            "user_id",
             "author",
-            "date",
+            "created_at",
             "thumbnail",
             "content",
             "likes",
@@ -68,6 +70,13 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj) -> int:
         return obj.comments.count()
+
+    def to_representation(self, instance):
+        res = super().to_representation(instance)
+
+        res.update({"author": instance.author.nickname})
+
+        return res
 
 
 class BoardDetailSerializer(BoardCreateSerializer):

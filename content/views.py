@@ -68,6 +68,17 @@ class PostViewSet(
         IsAuthorOrReadOnly,
     )
 
+    def create(self, request, *args, **kwargs):
+        data = {**request.data}
+        data.update({"author": request.user})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
 
 @extend_schema(tags=["Cards"])
 class CardCreateAPIView(generics.CreateAPIView):
