@@ -24,4 +24,4 @@ jobs:
             cd ~/class-deck-backend
             git pull
             ps aux | grep gunicorn | grep -v grep | awk '{print $2}' | xargs kill -9
-            ./scripts/start_prod.sh
+            ./scripts/prod.sh
