@@ -43,6 +43,7 @@ class PostSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     is_public = serializers.BooleanField(default=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -56,6 +57,7 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "thumbnail",
             "content",
+            "is_liked",
             "likes",
             "comments",
             "is_public",
@@ -72,6 +74,14 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_likes(self, obj) -> int:
         return obj.like_count()
+
+    def get_is_liked(self, obj) -> bool:
+        request = self.context.get("request")
+        if request and hasattr(request, "user") and request.user.is_authenticated:
+            user = request.user
+            return obj.is_liked(user)
+
+        return False
 
     def get_comments(self, obj) -> int:
         return obj.comments.count()
