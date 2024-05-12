@@ -65,6 +65,9 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ("author", "created_at", "updated_at")
 
     def get_thumbnail(self, obj) -> str:
+        if not obj.card:
+            return ""
+
         return obj.card.image_front
 
     def get_likes(self, obj) -> int:

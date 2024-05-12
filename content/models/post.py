@@ -11,7 +11,9 @@ User = get_user_model()
 class Post(Commentable, Likeable, models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="posts")
-    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="posts")
+    card = models.ForeignKey(
+        Card, null=True, on_delete=models.CASCADE, related_name="posts"
+    )
 
     title = models.CharField(max_length=255)
     content = models.TextField()

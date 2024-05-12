@@ -45,3 +45,16 @@ class TestPostCreateAPI:
         response = guest_client.post(url, data)
 
         assert response.status_code == status.HTTP_201_CREATED, response.data
+
+    def test_카드_없이도_게시글을_말들_수_있다(self, set_credentials):
+        user = UserFactory()
+
+        user_client = set_credentials(user)
+
+        url = reverse("posts-list")
+
+        data = {"title": "test_post", "content": "test_post", "board": 1}
+
+        response = user_client.post(url, data)
+
+        assert response.status_code == status.HTTP_201_CREATED, response.data
