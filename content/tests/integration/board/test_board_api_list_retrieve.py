@@ -67,7 +67,7 @@ def test_사용자는_보드의_정보를_확인할_수_있다(set_credentials, 
     assert response.data["id"] == board.id
     assert response.data["title"] == board.title
     assert response.data["description"] == board.description
-    assert response.data["author"] == board.author.id
+    assert response.data["author"] == board.author.nickname
     assert (
         response.data["created_at"]
         == board.created_at.astimezone(
@@ -167,7 +167,7 @@ class TestBoardDetailPostAPI:
         assert response.data["posts"][0]["id"] == post.id
         assert response.data["posts"][0]["title"] == post.title
         assert response.data["posts"][0]["author"] == post.author.nickname
-        assert response.data["posts"][0]["date"] == post.created_at
+        assert response.data["posts"][0]["created_at"] == post.created_at
         assert response.data["posts"][0]["thumbnail"] == post.card.image_front
         assert response.data["posts"][0]["content"] == post.content
         assert response.data["posts"][0]["likes"] == post.like_count()

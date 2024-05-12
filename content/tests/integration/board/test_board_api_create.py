@@ -23,11 +23,11 @@ class TestBoardCreateAPI:
 
         url = reverse("boards-list")
 
-        data = {"title": "test_board", "description": "test_board", "author": user.id}
+        data = {"title": "test_board", "description": "test_board"}
 
         response = user_client.post(url, data)
 
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED, response.data
 
     def test_게스트는_보드를_만들_수_없다(self, set_credentials):
         guest = GuestFactory()
