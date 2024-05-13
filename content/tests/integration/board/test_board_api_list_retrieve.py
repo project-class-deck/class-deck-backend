@@ -178,6 +178,19 @@ class TestBoardDetailPostAPI:
         assert response.data["posts"][0]["comments"] == post.comments.count()
         assert response.data["posts"][0]["is_liked"] is False
 
+        my_post = PostFactory(
+            board=self.board,
+            card=self.card,
+            title="내 게시글 제목입니다",
+            content="글을 작성합니다",
+            author=user,
+        )
+
+        response = user_client.get(self.url)
+
+        assert response.data["posts"][1]["id"] == my_post.id
+        assert response.data["posts"][1]["is_author"] is True
+
     def test_게스트는_보드의_게시물을_확인할_수_있다(
         self, set_credentials, cards_json_list
     ):
