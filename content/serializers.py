@@ -44,6 +44,7 @@ class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     is_public = serializers.BooleanField(default=True)
     is_liked = serializers.SerializerMethodField()
+    is_author = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -58,6 +59,7 @@ class PostSerializer(serializers.ModelSerializer):
             "thumbnail",
             "content",
             "is_liked",
+            "is_author",
             "likes",
             "comments",
             "is_public",
@@ -80,6 +82,14 @@ class PostSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user") and request.user.is_authenticated:
             user = request.user
             return obj.is_liked(user)
+
+        return False
+
+    def get_is_author(self, obj) -> bool:
+        request = self.context.get("request")
+        if request and hasattr(request, "user") and request.user.is_authenticated:
+            user = request.user
+            return user == obj.author
 
         return False
 
