@@ -8,11 +8,13 @@ from .models import Board, Card, Comment, Like, Post
 
 class BoardCreateSerializer(serializers.ModelSerializer):
     is_displayed = serializers.BooleanField(default=True)
+    slug = serializers.SlugField(allow_null=True, required=False)
 
     class Meta:
         model = Board
         fields = [
             "id",
+            "slug",
             "title",
             "description",
             "is_displayed",
