@@ -13,6 +13,7 @@ class BoardFactory(DjangoModelFactory):
     title = factory.Faker("sentence", nb_words=4)
     description = factory.Faker("sentence", nb_words=10)
     author = factory.SubFactory(UserFactory)
+    is_displayed = True
 
     created_at = factory.Faker("date_time_this_month")
     updated_at = factory.Faker("date_time_this_month")

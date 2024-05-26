@@ -7,12 +7,15 @@ from .models import Board, Card, Comment, Like, Post
 
 
 class BoardCreateSerializer(serializers.ModelSerializer):
+    is_displayed = serializers.BooleanField(default=True)
+
     class Meta:
         model = Board
         fields = [
             "id",
             "title",
             "description",
+            "is_displayed",
         ]
         read_only_fields = ("author", "created_at", "updated_at")
 

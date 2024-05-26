@@ -32,6 +32,7 @@ class TestBoardListAPI:
         response = user_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
+        assert response.data["results"][0]["is_displayed"] is True, response.data
         assert response.data["count"] == 10
 
     def test_학생_사용자는_보드_목록을_볼_수_있다(self, set_credentials):
