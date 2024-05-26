@@ -69,6 +69,7 @@ def test_사용자는_보드의_정보를_확인할_수_있다(set_credentials, 
     assert response.data["title"] == board.title
     assert response.data["description"] == board.description
     assert response.data["author"] == board.author.nickname
+    assert response.data["user_id"] == board.author.id
     assert (
         response.data["created_at"]
         == board.created_at.astimezone(

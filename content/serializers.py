@@ -110,6 +110,7 @@ class PostSerializer(serializers.ModelSerializer):
 class BoardDetailSerializer(BoardCreateSerializer):
     cards = SerializerMethodField()
     posts = PostSerializer(many=True, read_only=True)
+    user_id = serializers.ReadOnlyField(source="author.id")
 
     class Meta:
         model = Board
@@ -117,6 +118,7 @@ class BoardDetailSerializer(BoardCreateSerializer):
             "id",
             "title",
             "description",
+            "user_id",
             "author",
             "cards",
             "posts",
