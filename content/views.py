@@ -33,6 +33,7 @@ class BoardViewSet(viewsets.ModelViewSet):
         DjangoModelPermissionsOrAnonReadOnly,
         IsAuthorOrReadOnly,
     )
+    lookup_field = "slug"
 
     def get_queryset(self):
         if self.action == "retrieve":
