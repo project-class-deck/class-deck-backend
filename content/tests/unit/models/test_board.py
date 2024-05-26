@@ -29,8 +29,8 @@ def test_사용자는_보드에_좋아요를_추가할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
         author=user,
-        title="new board",
-        description="it's new board",
+        title="new board.py",
+        description="it's new board.py",
     )
 
     board.like(user)
@@ -46,8 +46,8 @@ def test_사용자는_보드에_좋아요를_취소할_수_있다():
     user = UserFactory()
     board = Board.objects.create(
         author=user,
-        title="new board",
-        description="it's new board",
+        title="new board.py",
+        description="it's new board.py",
     )
 
     board.like(user)
@@ -67,8 +67,8 @@ def test_사용자가_삭제되면_사용자의_보드도_삭제된다():
     user = UserFactory()
     board = Board.objects.create(
         author=user,
-        title="new board",
-        description="it's new board",
+        title="new board.py",
+        description="it's new board.py",
     )
 
     user.delete()

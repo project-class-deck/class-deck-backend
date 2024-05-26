@@ -11,7 +11,7 @@ class TestBoardDeleteAPI:
     def setup_method(self):
         self.user = UserFactory()
         self.board = BoardFactory(author=self.user)
-        self.url = reverse("boards-detail", kwargs={"pk": self.board.id})
+        self.url = reverse("boards-detail", kwargs={"slug": self.board.slug})
 
     def test_비로그인_사용자는_보드를_삭제할_수_없다(self, client):
         response = client.delete(self.url)
@@ -39,7 +39,7 @@ class TestBoardDeleteAPI:
 
         new_board = BoardFactory()
 
-        url = reverse("boards-detail", kwargs={"pk": new_board.id})
+        url = reverse("boards-detail", kwargs={"slug": new_board.slug})
 
         response = user_client.delete(url)
 

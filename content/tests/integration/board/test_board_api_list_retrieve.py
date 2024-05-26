@@ -60,7 +60,7 @@ def test_사용자는_보드의_정보를_확인할_수_있다(set_credentials, 
 
     board = BoardFactory()
 
-    url = reverse("boards-detail", kwargs={"pk": board.id})
+    url = reverse("boards-detail", kwargs={"slug": board.slug})
 
     response = user_client.get(url)
 
@@ -92,7 +92,7 @@ def exclude_id_key(dictionary):
 class TestBoardDetailCardAPI:
     def setup_method(self):
         self.board = BoardFactory()
-        self.url = reverse("boards-detail", kwargs={"pk": self.board.id})
+        self.url = reverse("boards-detail", kwargs={"slug": self.board.slug})
 
     def test_비로그인_사용자는_보드의_카드를_확인할_수_있다(
         self, client, cards_json_list
@@ -132,7 +132,7 @@ class TestBoardDetailPostAPI:
     def setup_method(self):
         self.board = BoardFactory()
         self.card = Card.objects.get(pk=1)
-        self.url = reverse("boards-detail", kwargs={"pk": self.board.id})
+        self.url = reverse("boards-detail", kwargs={"slug": self.board.slug})
 
     def test_비로그인_사용자는_보드의_게시물을_확인할_수_있다(
         self, client, cards_json_list
