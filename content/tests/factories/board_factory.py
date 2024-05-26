@@ -14,6 +14,7 @@ class BoardFactory(DjangoModelFactory):
     description = factory.Faker("sentence", nb_words=10)
     author = factory.SubFactory(UserFactory)
     is_displayed = True
+    slug = factory.Faker("slug")
 
     created_at = factory.Faker("date_time_this_month")
     updated_at = factory.Faker("date_time_this_month")
