@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class Board(Likeable, models.Model):
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, allow_unicode=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="boards")
