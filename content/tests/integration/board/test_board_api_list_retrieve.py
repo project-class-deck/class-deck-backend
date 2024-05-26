@@ -112,6 +112,7 @@ class TestBoardDetailCardAPI:
         response = user_client.get(self.url)
 
         assert response.status_code == status.HTTP_200_OK
+        assert response.data["is_displayed"] == self.board.is_displayed
         assert exclude_id_key(response.data["cards"]) == cards_json_list
 
     def test_게스트는_보드의_카드를_확인할_수_있다(
