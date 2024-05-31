@@ -7,7 +7,7 @@ from users.tests.factories import UserFactory
 
 
 @pytest.mark.django_db
-class TestBoardDeleteAPI:
+class TestBoardSelectCardAPI:
     def setup_method(self):
         self.user = UserFactory()
         self.board = BoardFactory(author=self.user)
@@ -18,7 +18,7 @@ class TestBoardDeleteAPI:
 
         user_client = set_credentials(self.user)
 
-        response = user_client.post(f"{url}?card=1")
+        response = user_client.post(f"{url}?card=2")
 
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data.get("count") == 1
@@ -32,4 +32,7 @@ class TestBoardDeleteAPI:
 
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data.get("count") == 2
-        assert response.data.get("users") == [self.user.nickname, new_user.nickname]
+        assert set(response.data.get("users")) == {
+            self.user.nickname,
+            new_user.nickname,
+        }
