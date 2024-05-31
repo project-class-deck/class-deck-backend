@@ -32,7 +32,7 @@ class BoardCreateSerializer(serializers.ModelSerializer):
 class BoardUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
-        fields = ["title", "description", "author"]
+        fields = ["title", "description", "author", "is_displayed"]
         read_only_fields = ("author", "created_at", "updated_at")
 
 

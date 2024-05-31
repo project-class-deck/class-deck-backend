@@ -34,7 +34,11 @@ class TestBoardCreateAPI:
     def test_로그인_사용자는_보드를_수정할_수_있다(self, set_credentials):
         user_client = set_credentials(self.user)
 
-        data = {"title": "test_board", "description": "test_board"}
+        data = {
+            "title": "test_board",
+            "description": "test_board",
+            "is_displayed": False,
+        }
 
         response = user_client.patch(self.url, data)
 
