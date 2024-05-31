@@ -36,3 +36,21 @@ class TestBoardSelectCardAPI:
             self.user.nickname,
             new_user.nickname,
         }
+
+    def test_사용자는_카드_선택을_해제_수_있다(self, set_credentials):
+        select_url = reverse("boards-select", kwargs={"slug": self.board.slug})
+        deselect_url = reverse("boards-deselect", kwargs={"slug": self.board.slug})
+
+        user_client = set_credentials(self.user)
+
+        response = user_client.post(f"{select_url}?card=2")
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data.get("count") == 1
+        assert response.data.get("users") == [self.user.nickname]
+
+        response = user_client.delete(f"{deselect_url}?card=2")
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data.get("count") == 0
+        assert response.data.get("users") == []
