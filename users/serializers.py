@@ -76,7 +76,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "email", "nickname")
-        read_only_fields = ("id", "username", "email", "nickname")
+        read_only_fields = ("id", "username", "email")
 
 
 class UserLoginSerializer(dj_rest_auth.serializers.LoginSerializer):
