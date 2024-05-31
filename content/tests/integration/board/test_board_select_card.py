@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework import status
 
@@ -54,3 +55,16 @@ class TestBoardSelectCardAPI:
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data.get("count") == 0
         assert response.data.get("users") == []
+
+    def test_사용자는_카드_선택한_목록을_확인할_수_있다(self, set_credentials):
+        selected_url = reverse("boards-selected", kwargs={"slug": self.board.slug})
+
+        user_client = set_credentials(self.user)
+
+        cache.set(f"board.{self.board.slug}.card.2", [self.user.nickname])
+
+        response = user_client.get(f"{selected_url}?card=2")
+
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data.get("count") == 1
+        assert response.data.get("users") == [self.user.nickname]

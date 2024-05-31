@@ -120,6 +120,38 @@ class BoardViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception=True)
 
+        return Response(serializer.data, status=status.HTTP_200_OK) @ action(
+            detail=True,
+            methods=["delete"],
+            permission_classes=[IsAuthenticated],
+            serializer_class=CardSelectedSerializer,
+        )
+
+    @action(
+        detail=True,
+        methods=["get"],
+        permission_classes=[IsAuthenticated],
+        serializer_class=CardSelectedSerializer,
+    )
+    def selected(self, request, slug=None):
+        card_id = request.GET.get("card", None)
+
+        if (
+            not Board.objects.filter(slug=slug).exists()
+            or not Card.objects.filter(id=card_id).exists()
+        ):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        cache_key = f"board.{slug}.card.{card_id}"
+
+        card_selected_users = cache.get(cache_key, set())
+
+        data = {"count": len(card_selected_users), "users": card_selected_users}
+
+        serializer = CardSelectedSerializer(data=data)
+
+        serializer.is_valid(raise_exception=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
