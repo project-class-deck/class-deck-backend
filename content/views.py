@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, status, viewsets
@@ -9,6 +10,7 @@ from rest_framework.permissions import (
     IsAuthenticated,
 )
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Board, Card, Comment, Like, Post
@@ -18,6 +20,7 @@ from .serializers import (
     BoardDetailSerializer,
     BoardUpdateSerializer,
     CardCreateSerializer,
+    CardSelectedSerializer,
     CommentCreateSerializer,
     CommentSerializer,
     LikeSerializer,
@@ -57,6 +60,37 @@ class BoardViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[IsAuthenticated],
+        serializer_class=CardSelectedSerializer,
+    )
+    def select(self, request, slug=None):
+        card_id = request.GET.get("card", None)
+
+        if (
+            not Board.objects.filter(slug=slug).exists()
+            or not Card.objects.filter(id=card_id).exists()
+        ):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        cache_key = f"board.{slug}.card.{card_id}"
+
+        card_selected_users = cache.get(cache_key, set())
+
+        card_selected_users.add(request.user.nickname)
+
+        cache.set(cache_key, card_selected_users, timeout=28800)
+
+        data = {"count": len(card_selected_users), "users": card_selected_users}
+
+        serializer = CardSelectedSerializer(data=data)
+
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @extend_schema(tags=["Posts"])
 class PostViewSet(
@@ -81,6 +115,31 @@ class CardCreateAPIView(generics.CreateAPIView):
     queryset = Card.objects.all()
     serializer_class = CardCreateSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+
+
+@extend_schema(tags=["Cards"])
+class CardSelectAPIView(APIView):
+    queryset = Card.objects.all()
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        content_type = get_object_or_404(
+            ContentType, model=kwargs["model_slug"].lower()
+        )
+        data = {
+            "author": request.user.id,
+            "content_type": content_type.id,
+            "object_id": kwargs["pk"],
+            "content": request.data["content"],
+        }
+
+        serializer = CommentSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(tags=["Comments"])

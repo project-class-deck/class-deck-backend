@@ -42,6 +42,11 @@ class CardSerializer(serializers.ModelSerializer):
         exclude = ("board", "image", "created_at", "updated_at")
 
 
+class CardSelectedSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+    users = serializers.ListField(child=serializers.CharField())
+
+
 class PostSerializer(serializers.ModelSerializer):
     user_id = serializers.ReadOnlyField(source="author.id")
     thumbnail = serializers.SerializerMethodField()

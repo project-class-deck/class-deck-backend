@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     BoardViewSet,
     CardCreateAPIView,
+    CardSelectAPIView,
     CommentAPIView,
     CommentCreateAPIView,
     LikeAPIView,
@@ -14,10 +15,10 @@ router = DefaultRouter()
 router.register(r"boards", BoardViewSet, basename="boards")
 router.register(r"posts", PostViewSet, basename="posts")
 
-
 urlpatterns = [
     path("", include(router.urls)),
     path("cards/", CardCreateAPIView.as_view(), name="card-create"),
+    path("cards/select", CardSelectAPIView.as_view(), name="card-select"),
     path(
         "comments/<str:model_slug>/<int:pk>/",
         CommentCreateAPIView.as_view(),
